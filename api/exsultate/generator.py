@@ -10,7 +10,6 @@ class Generator:
     def __init__(self):
         self.path = Path(os.path.dirname(os.path.realpath(__file__)))
         self.configuration = None
-        self.filename = None
         self.document = None
         self.previous_indented = None
 
@@ -27,12 +26,12 @@ class Generator:
     def generate_config_file(self, filename):
         write_json(Generator.get_default_config(), filename)
 
-    def generate(self, songbook, filename = ''):
-        self.filename = filename + ".docx"
+    def generate(self, songbook, target_stream=None):
+        if target_stream is None:
+            target_stream = BytesIO()
         self.document = Document(self.path.joinpath(Path(self.configuration['template'])))
         for song in songbook.songs:
             self.add_song_to_document(song)
-        target_stream = BytesIO()
         self.document.save(target_stream)
         return target_stream
 

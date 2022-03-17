@@ -20,5 +20,5 @@ def songbook(ids_string):
     songbook = exsultate.song.SongBook.from_dict(dictionary)
     generator = exsultate.generator.Generator()
     generator.load_configuration()
-    output = generator.generate(songbook, 'generated/ulotka')
+    output = generator.generate(songbook)
     return output
