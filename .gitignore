@@ -2,3 +2,4 @@ virt/
 api/.idea/
 api/__pycache__/kamuzo.cpython-39.pyc
 api/exsultate/__pycache__/
+.idea/
