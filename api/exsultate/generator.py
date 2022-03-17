@@ -4,6 +4,7 @@ import re
 from .exsultate import *
 from docx import Document
 from pathlib import Path
+from io import BytesIO
 
 class Generator:
     def __init__(self):
@@ -27,14 +28,13 @@ class Generator:
         write_json(Generator.get_default_config(), filename)
 
     def generate(self, songbook, filename = ''):
-        # self.filename = filename + str(time.time_ns()) + ".docx"
         self.filename = filename + ".docx"
         self.document = Document(self.path.joinpath(Path(self.configuration['template'])))
         for song in songbook.songs:
             self.add_song_to_document(song)
-
-        self.document.save(str(self.path.joinpath(Path(self.filename))))
-        return self.filename
+        target_stream = BytesIO()
+        self.document.save(target_stream)
+        return target_stream
 
     def add_song_to_document(self, song):
         self.previous_indented = True

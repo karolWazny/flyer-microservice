@@ -2,6 +2,7 @@ import flask
 from requests.sessions import InvalidSchema
 import kamuzo
 import os
+from io import BytesIO
 
 application = flask.Flask(__name__)
 
@@ -11,10 +12,16 @@ def home():
 
 @application.route('/api/v1/songbook/<ids_string>', methods=['GET'])
 def generate_songbook(ids_string):
-    filename = kamuzo.songbook(ids_string)
-    directory = os.path.dirname(os.path.realpath(__file__)) + "/exsultate"
+    mem = kamuzo.songbook(ids_string)
+    mem.seek(0)
     try:
-        return flask.send_from_directory(directory, filename, as_attachment=True)
+        #return flask.send_from_directory(directory, filename, as_attachment=True)
+        return flask.send_file(
+            mem,
+            as_attachment=True,
+            attachment_filename='ulotka.docx',
+            mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        )
     except FileNotFoundError:
         abort(404)
 
