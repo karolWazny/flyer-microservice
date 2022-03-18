@@ -67,6 +67,7 @@ class Generator:
             self.add_title(song.title)
             self.add_songpart_to_document(first_part)
         else:
+            print(embedded_title)
             self.add_songpart_including_title(first_part, embedded_title)
 
     def find_title_in_songpart(self, title, songpart):
@@ -81,7 +82,23 @@ class Generator:
         self.document.add_paragraph(title, style=style_name)
 
     def add_songpart_including_title(self, songpart, title):
-        self.add_songpart_to_document(songpart)
+        self.previous_part_type = songpart.type
+        style_name = self.configuration['style_mappings'][songpart.type]
+        if not self.previous_indented:
+            style_name += '-indent'
+        self.previous_indented = not self.previous_indented
+        try:
+            lines = songpart.lyrics().split('\n')
+            first_line_no_title = lines[0].split(title)[1]
+            paragraph = self.document.add_paragraph('', style=style_name)
+            title_run = paragraph.add_run(title)
+            title_run.style = 'title-' + style_name
+            paragraph.add_run(first_line_no_title)
+            for line in lines:
+                paragraph.add_run("" + '\n' + line)
+        except:
+            self.add_title(title)
+            self.document.add_paragraph(songpart.lyrics(), style=style_name)
 
     def add_songpart_to_document(self, songpart):
         self.previous_part_type = songpart.type
