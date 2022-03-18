@@ -87,18 +87,21 @@ class Generator:
         if not self.previous_indented:
             style_name += '-indent'
         self.previous_indented = not self.previous_indented
-        try:
-            lines = songpart.lyrics().split('\n')
-            first_line_no_title = lines[0].split(title)[1]
-            paragraph = self.document.add_paragraph('', style=style_name)
-            title_run = paragraph.add_run(title)
-            title_run.style = 'title-' + style_name
-            paragraph.add_run(first_line_no_title)
-            for line in lines:
-                paragraph.add_run("" + '\n' + line)
-        except:
-            self.add_title(title)
-            self.document.add_paragraph(songpart.lyrics(), style=style_name)
+        lines = songpart.lyrics().split('\n')
+        first_line_spaced = " " + lines[0].strip() + " "
+        first_line_no_title = first_line_spaced.split(title)
+        print(first_line_no_title)
+        paragraph = self.document.add_paragraph('', style=style_name)
+        pre_title = first_line_no_title[0]
+        if pre_title != ' ':
+            paragraph.add_run(pre_title.lstrip())
+        title_run = paragraph.add_run(title)
+        title_run.style = 'title-' + style_name
+        post_title = first_line_no_title[1]
+        if post_title != ' ':
+            paragraph.add_run(post_title.rstrip())
+        for line in lines[1:]:
+            paragraph.add_run("" + '\n' + line)
 
     def add_songpart_to_document(self, songpart):
         self.previous_part_type = songpart.type
