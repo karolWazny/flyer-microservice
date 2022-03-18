@@ -5,6 +5,7 @@ from .exsultate import *
 from docx import Document
 from pathlib import Path
 from io import BytesIO
+import json
 
 class Generator:
     def __init__(self):
@@ -20,8 +21,10 @@ class Generator:
 
     @staticmethod
     def get_default_config():
-        return {"style_mappings": { "number": "number", "verse": "verse", "chorus": "chorus", "title": "title-itself"},
-                "template": "template.docx"}
+        return {"style_mappings": { "number": "number", "verse": "verse", "chorus": "chorus", "title": "title-itself",
+                                    "prayer":"prayer"},
+                "template": "template.docx",
+                "prayer":"prayer.json"}
 
     def generate_config_file(self, filename):
         write_json(Generator.get_default_config(), filename)
@@ -32,8 +35,18 @@ class Generator:
         self.document = Document(self.path.joinpath(Path(self.configuration['template'])))
         for song in songbook.songs:
             self.add_song_to_document(song)
+        self.add_prayer()
         self.document.save(target_stream)
         return target_stream
+
+    def add_prayer(self):
+        style_name = self.configuration['style_mappings']['prayer']
+        try:
+            file = open(self.path.joinpath(Path(self.configuration['prayer'])), 'r')
+            content = json.load(file)['content']
+            self.document.add_paragraph(content, style=style_name)
+        except FileNotFoundError:
+            pass
 
     def add_song_to_document(self, song):
         self.previous_indented = True
