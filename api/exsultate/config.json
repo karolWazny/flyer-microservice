@@ -1,1 +1,1 @@
-{"style_mappings": {"number": "number", "verse": "verse", "chorus": "chorus", "title": "title-itself", "prayer": "prayer"}, "template": "template.docx"}
+{"style_mappings": {"number": "number", "verse": "verse", "chorus": "chorus", "title": "title-itself", "prayer": "prayer"}, "template": "template.docx", "prayer": "prayer.json"}
